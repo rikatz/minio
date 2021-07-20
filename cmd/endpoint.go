@@ -200,9 +200,12 @@ func NewEndpoint(arg string) (ep Endpoint, e error) {
 // PoolEndpoints represent endpoints in a given pool
 // along with its setCount and setDriveCount.
 type PoolEndpoints struct {
+	// indicates if endpoints are provided in non-ellipses style
+	Legacy       bool
 	SetCount     int
 	DrivesPerSet int
 	Endpoints    Endpoints
+	CmdLine      string
 }
 
 // EndpointServerPools - list of list of endpoints
@@ -221,6 +224,13 @@ func (l EndpointServerPools) GetLocalPoolIdx(ep Endpoint) int {
 		}
 	}
 	return -1
+}
+
+// Legacy returns 'true' if the MinIO server commandline was
+// provided with no ellipses pattern, those are considered
+// legacy deployments.
+func (l EndpointServerPools) Legacy() bool {
+	return len(l) == 1 && l[0].Legacy
 }
 
 // Add add pool endpoints
